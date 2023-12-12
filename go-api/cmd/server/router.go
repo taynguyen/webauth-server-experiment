@@ -4,6 +4,7 @@ import (
 	"github.com/dwarvesf/go-api/docs"
 	"github.com/dwarvesf/go-api/pkg/handler"
 	"github.com/dwarvesf/go-api/pkg/handler/v1/portal"
+	"github.com/dwarvesf/go-api/pkg/handler/v1/pwl"
 	"github.com/dwarvesf/go-api/pkg/logger/monitor"
 	"github.com/dwarvesf/go-api/pkg/middleware"
 	"github.com/dwarvesf/go-api/pkg/realtime"
@@ -11,6 +12,7 @@ import (
 	"github.com/dwarvesf/go-api/pkg/util"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/go-webauthn/webauthn/webauthn"
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
@@ -62,6 +64,19 @@ func publicHandler(r *gin.Engine, a App) {
 	h := handler.New(*a.cfg, a.monitor)
 	portalHandler := portal.New(*a.cfg, a.l, a.repo, a.service, a.monitor)
 
+	var webAuthn *webauthn.WebAuthn
+	wconfig := &webauthn.Config{
+		RPDisplayName: "Go Webauthn",                               // Display Name for your site
+		RPID:          "go-webauthn.local",                         // Generally the FQDN for your site
+		RPOrigins:     []string{"https://login.go-webauthn.local"}, // The origin URLs allowed for WebAuthn requests
+	}
+
+	var err error
+	if webAuthn, err = webauthn.New(wconfig); err != nil {
+		panic(err)
+	}
+	pwlHandler := pwl.New(*a.cfg, a.l, a.repo, a.service, webAuthn, a.monitor)
+
 	r.GET("/healthz", h.Healthz)
 
 	// use ginSwagger middleware to serve the API docs
@@ -73,6 +88,12 @@ func publicHandler(r *gin.Engine, a App) {
 	{
 		portalGroup.POST("/auth/login", portalHandler.Login)
 		portalGroup.POST("/auth/signup", portalHandler.Signup)
+	}
+
+	pwlGroup := apiV1.Group("/pwl")
+	{
+		pwlGroup.POST("/user/registration/begin", pwlHandler.BeginRegistration)
+		pwlGroup.POST("/user/registration/finish", pwlHandler.FinishRegistration)
 	}
 
 	apiV1.GET("/sse", realtime.SSEHeadersMiddleware(), func(c *gin.Context) {
