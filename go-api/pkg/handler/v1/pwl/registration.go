@@ -2,7 +2,6 @@ package pwl
 
 import (
 	"crypto/rand"
-	"encoding/base64"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -37,12 +36,9 @@ func (u WAUser) WebAuthnIcon() string {
 	return u.WaIcon
 }
 
-var b64Encoding = base64.URLEncoding.WithPadding(base64.NoPadding)
-
-var tempSessionMemoryStore = make(map[string]*webauthn.SessionData)
-
 func (h Handler) BeginRegistration(c *gin.Context) {
-	// user := datastore.GetUser() // Find or create the new user
+	// Example, we will create a new user
+
 	user := WAUser{
 		WaID:          randomUserID(),
 		WaName:        "WaName",
@@ -57,8 +53,8 @@ func (h Handler) BeginRegistration(c *gin.Context) {
 	// handle errors if present
 	// store the sessionData values
 	// fmt.Printf("session: %+v\n", session)
-	b64UserID := b64Encoding.EncodeToString(user.WaID)
-	tempSessionMemoryStore[b64UserID] = session
+	setUserSection(user.WaID, session)
+	setUser(user.WaID, user)
 
 	// JSONResponse(w, options, http.StatusOK) // return the options generated
 	// options.publicKey contain our registration options
