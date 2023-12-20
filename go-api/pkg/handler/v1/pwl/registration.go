@@ -8,6 +8,7 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
+// TODO: move?
 type WAUser struct {
 	WaID          []byte
 	WaDisplayName string
@@ -53,7 +54,7 @@ func (h Handler) BeginRegistration(c *gin.Context) {
 	// handle errors if present
 	// store the sessionData values
 	// fmt.Printf("session: %+v\n", session)
-	setUserSection(user.WaID, session)
+	setUserSession(user.WaID, session)
 	setUser(user.WaID, user)
 
 	// JSONResponse(w, options, http.StatusOK) // return the options generated

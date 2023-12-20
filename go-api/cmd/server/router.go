@@ -90,10 +90,14 @@ func publicHandler(r *gin.Engine, a App) {
 		portalGroup.POST("/auth/signup", portalHandler.Signup)
 	}
 
+	// TODO: change to /api/auth/create/begin/{username}?
 	pwlGroup := apiV1.Group("/pwl")
 	{
 		pwlGroup.POST("/user/registration/begin", pwlHandler.BeginRegistration)
 		pwlGroup.POST("/user/registration/finish", pwlHandler.FinishRegistration)
+		pwlGroup.POST("/user/login/begin", pwlHandler.BeginLogin)
+		pwlGroup.POST("/user/login/finish", pwlHandler.FinishLogin)
+
 	}
 
 	apiV1.GET("/sse", realtime.SSEHeadersMiddleware(), func(c *gin.Context) {
