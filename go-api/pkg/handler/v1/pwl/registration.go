@@ -53,7 +53,7 @@ func (h Handler) FinishRegistration(c *gin.Context) {
 
 	// Get the session data stored from the function above
 	// session := datastore.GetSession()
-	session, existed := userSectionRepo[encodedUserID]
+	session, existed := userSessionRepo[encodedUserID]
 	if !existed {
 		c.JSON(http.StatusBadRequest, "session not found")
 		return

@@ -90,7 +90,6 @@ func publicHandler(r *gin.Engine, a App) {
 		portalGroup.POST("/auth/signup", portalHandler.Signup)
 	}
 
-	// TODO: change to /api/auth/create/begin/{username}?
 	pwlGroup := apiV1.Group("/pwl")
 	{
 		pwlGroup.POST("/user/registration/begin", pwlHandler.BeginRegistration)

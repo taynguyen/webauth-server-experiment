@@ -8,12 +8,12 @@ import (
 
 var b64Encoding = base64.URLEncoding.WithPadding(base64.NoPadding)
 
-var userSectionRepo = make(map[string]*webauthn.SessionData)
+var userSessionRepo = make(map[string]*webauthn.SessionData)
 var userRepo = make(map[string]WAUser)
 
 func setUserSession(id []byte, value *webauthn.SessionData) {
 	idStr := b64Encoding.EncodeToString(id)
-	userSectionRepo[idStr] = value
+	userSessionRepo[idStr] = value
 }
 
 func setUser(id []byte, value WAUser) {

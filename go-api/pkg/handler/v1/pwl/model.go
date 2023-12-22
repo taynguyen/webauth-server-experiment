@@ -2,7 +2,6 @@ package pwl
 
 import "github.com/go-webauthn/webauthn/webauthn"
 
-// TODO: move?
 type WAUser struct {
 	WaID          []byte
 	WaDisplayName string
