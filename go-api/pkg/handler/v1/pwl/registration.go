@@ -6,39 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-webauthn/webauthn/webauthn"
 )
-
-// TODO: move?
-type WAUser struct {
-	WaID          []byte
-	WaDisplayName string
-	WaName        string
-	WaCredentials []webauthn.Credential
-	WaIcon        string
-
-	Credentials []*webauthn.Credential
-}
-
-func (u WAUser) WebAuthnID() []byte {
-	return u.WaID
-}
-
-func (u WAUser) WebAuthnDisplayName() string {
-	return u.WaDisplayName
-}
-
-func (u WAUser) WebAuthnName() string {
-	return u.WaName
-}
-
-func (u WAUser) WebAuthnCredentials() []webauthn.Credential {
-	return u.WaCredentials
-}
-
-func (u WAUser) WebAuthnIcon() string {
-	return u.WaIcon
-}
 
 func (h Handler) BeginRegistration(c *gin.Context) {
 	// Example, we will create a new user
@@ -102,12 +70,16 @@ func (h Handler) FinishRegistration(c *gin.Context) {
 		return
 	}
 	fmt.Printf("credential: %+v\n", credential)
+	if credential == nil {
+		c.JSON(http.StatusBadRequest, "credential is nil")
+		return
+	}
 
 	// If creation was successful, store the credential object
 	// Pseudocode to add the user credential.
 	// user.AddCredential(credential)
 	// datastore.SaveUser(user)
-	user.Credentials = append(user.Credentials, credential)
+	user.WaCredentials = append(user.WaCredentials, *credential)
 	setUser(user.WaID, user)
 
 	// JSONResponse(w, "Registration Success", http.StatusOK) // Handle next steps
