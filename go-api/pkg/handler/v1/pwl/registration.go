@@ -2,6 +2,7 @@ package pwl
 
 import (
 	"crypto/rand"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,6 +16,8 @@ type WAUser struct {
 	WaName        string
 	WaCredentials []webauthn.Credential
 	WaIcon        string
+
+	Credentials []*webauthn.Credential
 }
 
 func (u WAUser) WebAuthnID() []byte {
@@ -56,6 +59,7 @@ func (h Handler) BeginRegistration(c *gin.Context) {
 	// fmt.Printf("session: %+v\n", session)
 	setUserSession(user.WaID, session)
 	setUser(user.WaID, user)
+	fmt.Println("userID: ", b64Encoding.EncodeToString(user.WaID))
 
 	// JSONResponse(w, options, http.StatusOK) // return the options generated
 	// options.publicKey contain our registration options
@@ -70,22 +74,42 @@ func randomUserID() []byte {
 }
 
 func (h Handler) FinishRegistration(c *gin.Context) {
+	encodedUserID := c.GetHeader("user-id")
+	fmt.Println("encodedUserID: ", encodedUserID)
 	// user := datastore.GetUser() // Get the user
+	user, existed := userRepo[encodedUserID]
+	if !existed {
+		c.JSON(http.StatusBadRequest, "user not found")
+		return
+	}
 
-	// // Get the session data stored from the function above
+	// Get the session data stored from the function above
 	// session := datastore.GetSession()
+	session, existed := userSectionRepo[encodedUserID]
+	if !existed {
+		c.JSON(http.StatusBadRequest, "session not found")
+		return
+	}
+	if session == nil {
+		c.JSON(http.StatusBadRequest, "session is nil")
+		return
+	}
 
-	// credential, err := h.webAuthn.FinishRegistration(user, session, r)
-	// if err != nil {
-	// 	// Handle Error and return.
+	credential, err := h.webAuthn.FinishRegistration(user, *session, c.Request)
+	if err != nil {
+		// Handle Error and return.
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	fmt.Printf("credential: %+v\n", credential)
 
-	// 	return
-	// }
-
-	// // If creation was successful, store the credential object
-	// // Pseudocode to add the user credential.
+	// If creation was successful, store the credential object
+	// Pseudocode to add the user credential.
 	// user.AddCredential(credential)
 	// datastore.SaveUser(user)
+	user.Credentials = append(user.Credentials, credential)
+	setUser(user.WaID, user)
 
 	// JSONResponse(w, "Registration Success", http.StatusOK) // Handle next steps
+	c.JSON(http.StatusOK, "Registration Success")
 }
