@@ -24,3 +24,17 @@ type SignupRequest struct {
 	Status   string `json:"status"`
 	Avatar   string `json:"avatar"`
 } // @name SignupRequest
+
+// CreateMagicLinkRequest represent the create magic link request
+type CreateMagicLinkRequest struct {
+	Email string `json:"email" binding:"required"`
+} // @name CreateMagicLinkRequest
+
+// VerifyMagicLinkRequest represent the verify magic link request
+type VerifyMagicLinkRequest struct {
+	Secret string `json:"secret" binding:"required"`
+} // @name VerifyMagicLinkRequest
+
+type VerifyMagicLinkResponse struct {
+	AccessToken string `json:"accessToken" validate:"required"`
+} // @name VerifyMagicLinkResponse
