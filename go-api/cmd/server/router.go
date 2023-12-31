@@ -39,7 +39,7 @@ func setupRouter(a App) *gin.Engine {
 			AllowHeaders: []string{"Origin", "Host",
 				"Content-Type", "Content-Length",
 				"Accept-Encoding", "Accept-Language", "Accept",
-				"X-CSRF-Token", "Authorization", "X-Requested-With", "X-Access-Token"},
+				"X-CSRF-Token", "Authorization", "X-Requested-With", "X-Access-Token", "user-id"},
 			ExposeHeaders:    []string{"MeAllowMethodsntent-Length"},
 			AllowCredentials: true,
 		},
@@ -66,9 +66,10 @@ func publicHandler(r *gin.Engine, a App) {
 
 	var webAuthn *webauthn.WebAuthn
 	wconfig := &webauthn.Config{
-		RPDisplayName: "Go Webauthn",                               // Display Name for your site
-		RPID:          "go-webauthn.local",                         // Generally the FQDN for your site
-		RPOrigins:     []string{"https://login.go-webauthn.local"}, // The origin URLs allowed for WebAuthn requests
+		RPDisplayName: "Go Webauthn", // Display Name for your site
+		RPID:          "localhost",   // Generally the FQDN for your site
+		// RPOrigins:     []string{"https://login.go-webauthn.local"}, // The origin URLs allowed for WebAuthn requests
+		RPOrigins: []string{"http://localhost:4000"}, // The origin URLs allowed for WebAuthn requests
 	}
 
 	var err error

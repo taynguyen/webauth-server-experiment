@@ -20,6 +20,7 @@ func (h Handler) BeginRegistration(c *gin.Context) {
 	options, session, err := h.webAuthn.BeginRegistration(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
+		return
 	}
 
 	// handle errors if present
@@ -36,7 +37,7 @@ func (h Handler) BeginRegistration(c *gin.Context) {
 }
 
 func randomUserID() []byte {
-	buf := make([]byte, 64)
+	buf := make([]byte, 48)
 	rand.Read(buf)
 	return buf
 }
