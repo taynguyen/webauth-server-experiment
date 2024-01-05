@@ -38,6 +38,7 @@ const docTemplate = `{
                     "Auth"
                 ],
                 "summary": "Login to portal",
+                "operationId": "login",
                 "parameters": [
                     {
                         "description": "Body",
@@ -90,6 +91,7 @@ const docTemplate = `{
                     "Auth"
                 ],
                 "summary": "Signup",
+                "operationId": "signup",
                 "parameters": [
                     {
                         "description": "Body",
@@ -147,6 +149,7 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "Retrieve my information",
+                "operationId": "getMe",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -193,6 +196,7 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "Update user",
+                "operationId": "updateUser",
                 "parameters": [
                     {
                         "description": "Update user",
@@ -208,7 +212,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/User"
+                            "$ref": "#/definitions/UserResponse"
                         }
                     },
                     "400": {
@@ -250,6 +254,7 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "Update user's password",
+                "operationId": "updatePassword",
                 "parameters": [
                     {
                         "description": "Update user",
@@ -486,6 +491,14 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                }
+            }
+        },
+        "UserResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/User"
                 }
             }
         }

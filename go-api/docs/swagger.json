@@ -30,6 +30,7 @@
                     "Auth"
                 ],
                 "summary": "Login to portal",
+                "operationId": "login",
                 "parameters": [
                     {
                         "description": "Body",
@@ -82,6 +83,7 @@
                     "Auth"
                 ],
                 "summary": "Signup",
+                "operationId": "signup",
                 "parameters": [
                     {
                         "description": "Body",
@@ -139,6 +141,7 @@
                     "User"
                 ],
                 "summary": "Retrieve my information",
+                "operationId": "getMe",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -185,6 +188,7 @@
                     "User"
                 ],
                 "summary": "Update user",
+                "operationId": "updateUser",
                 "parameters": [
                     {
                         "description": "Update user",
@@ -200,7 +204,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/User"
+                            "$ref": "#/definitions/UserResponse"
                         }
                     },
                     "400": {
@@ -242,6 +246,7 @@
                     "User"
                 ],
                 "summary": "Update user's password",
+                "operationId": "updatePassword",
                 "parameters": [
                     {
                         "description": "Update user",
@@ -478,6 +483,14 @@
                 },
                 "id": {
                     "type": "integer"
+                }
+            }
+        },
+        "UserResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/User"
                 }
             }
         }

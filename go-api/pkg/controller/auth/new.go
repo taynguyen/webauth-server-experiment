@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"github.com/dwarvesf/go-api/pkg/service/emailhelper"
 
 	"github.com/dwarvesf/go-api/pkg/config"
 	"github.com/dwarvesf/go-api/pkg/logger/monitor"
@@ -15,6 +16,9 @@ import (
 type Controller interface {
 	Login(ctx context.Context, req model.LoginRequest) (*model.LoginResponse, error)
 	Signup(ctx context.Context, req model.SignupRequest) error
+
+	CreateMagicLink(ctx context.Context, email string) error
+	VerifyMagicLink(ctx context.Context, secret string) (string, error)
 }
 
 type impl struct {
@@ -23,6 +27,7 @@ type impl struct {
 	cfg            config.Config
 	monitor        monitor.Tracer
 	passwordHelper passwordhelper.Helper
+	emailHelper    emailhelper.Helper
 }
 
 // NewAuthController new auth controller
@@ -33,5 +38,6 @@ func NewAuthController(cfg config.Config, r *repository.Repo, monitor monitor.Tr
 		cfg:            cfg,
 		monitor:        monitor,
 		passwordHelper: passwordhelper.NewScrypt(),
+		emailHelper:    emailhelper.NewSendgrid(cfg.SendgridAPIKey),
 	}
 }

@@ -98,6 +98,9 @@ func publicHandler(r *gin.Engine, a App) {
 		pwlGroup.POST("/user/login/begin", pwlHandler.BeginLogin)
 		pwlGroup.POST("/user/login/finish", pwlHandler.FinishLogin)
 
+		pwlGroup.POST("/user/magic-link/create", pwlHandler.CreateMagicLink)
+		pwlGroup.POST("/user/magic-link/verify", pwlHandler.VerifyMagicLink)
+
 	}
 
 	apiV1.GET("/sse", realtime.SSEHeadersMiddleware(), func(c *gin.Context) {

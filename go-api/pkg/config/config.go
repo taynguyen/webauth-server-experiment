@@ -28,7 +28,8 @@ type Config struct {
 	DBMaxIdleConns int
 
 	// log system
-	SentryDSN string
+	SentryDSN      string
+	SendgridAPIKey string
 }
 
 // IsLocal check if env is local
@@ -58,6 +59,7 @@ func Generate(v ENV) *Config {
 		DatabaseURL:    v.GetString("DATABASE_URL"),
 		DBMaxOpenConns: v.GetInt("DB_MAX_OPEN_CONNS"),
 		DBMaxIdleConns: v.GetInt("DB_MAX_IDLE_CONNS"),
+		SendgridAPIKey: v.GetString("SENDGRID_API_KEY"),
 	}
 }
 
@@ -81,6 +83,7 @@ func LoadConfig(loaders []Loader) *Config {
 	v.SetDefault("SERVER_NAME", "local")
 	v.SetDefault("DB_MAX_OPEN_CONNS", 10)
 	v.SetDefault("DB_MAX_IDLE_CONNS", 5)
+	v.SetDefault("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/go-api-db?sslmode=disable")
 
 	for idx := range loaders {
 		newV, err := loaders[idx].Load(*v)
