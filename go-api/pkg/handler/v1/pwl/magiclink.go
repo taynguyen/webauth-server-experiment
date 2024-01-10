@@ -32,13 +32,16 @@ func (h Handler) CreateMagicLink(c *gin.Context) {
 		return
 	}
 
-	if err := h.authCtrl.CreateMagicLink(ctx, req.Email); err != nil {
+	magicLink, err := h.authCtrl.CreateMagicLink(ctx, req.Email)
+	if err != nil {
 		h.log.Error(err, "failed to create magic link")
 		util.HandleError(c, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, "Create and send magic link success")
+	c.JSON(http.StatusOK, view.CreateMagicLinkResponse{
+		MagicLink: magicLink,
+	})
 }
 
 func (h Handler) VerifyMagicLink(c *gin.Context) {

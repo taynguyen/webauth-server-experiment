@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/dwarvesf/go-api/pkg/model"
@@ -11,23 +10,23 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c impl) CreateMagicLink(ctx context.Context, email string) error {
+func (c impl) CreateMagicLink(ctx context.Context, email string) (string, error) {
 	const spanName = "CreateMagicLinkController"
 	ctx, span := c.monitor.Start(ctx, spanName)
 
 	defer span.End()
 
 	if email == "" {
-		return model.ErrMissingEmail
+		return "", model.ErrMissingEmail
 	}
 
 	dbCtx := db.FromContext(ctx)
 	user, err := c.repo.User.GetByEmail(dbCtx, email)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			return model.ErrInvalidCredentials
+			return "", model.ErrInvalidCredentials
 		}
-		return errors.WithStack(err)
+		return "", errors.WithStack(err)
 	}
 
 	now := time.Now()
@@ -41,30 +40,27 @@ func (c impl) CreateMagicLink(ctx context.Context, email string) error {
 		"iat":  jwt.NewNumericDate(now),
 	})
 	if err != nil {
-		return errors.WithStack(err)
+		return "", errors.WithStack(err)
 	}
 
-	// Send magic link to user
-	fmt.Println(token)
-
-	return nil
+	return token, nil
 }
 
-func (c impl) VerifyMagicLink(ctx context.Context, secret string) (string, error) {
+func (c impl) VerifyMagicLink(ctx context.Context, token string) (string, error) {
 	const spanName = "VerifyMagicLinkController"
 	ctx, span := c.monitor.Start(ctx, spanName)
 
 	defer span.End()
 
-	if secret == "" {
+	if token == "" {
 		return "", model.ErrNotFound
 	}
 
 	// Verify magic link
-	_, err := c.jwtHelper.ValidateToken(secret)
+	_, err := c.jwtHelper.ValidateToken(token)
 	if err != nil {
 		return "", model.ErrInvalidToken
 	}
 
-	return secret, nil
+	return token, nil
 }

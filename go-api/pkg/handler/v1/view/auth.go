@@ -35,6 +35,10 @@ type VerifyMagicLinkRequest struct {
 	Secret string `json:"secret" binding:"required"`
 } // @name VerifyMagicLinkRequest
 
+type CreateMagicLinkResponse struct {
+	MagicLink string `json:"magicLink" validate:"required"`
+} // @name CreateMagicLinkResponse
+
 type VerifyMagicLinkResponse struct {
 	AccessToken string `json:"accessToken" validate:"required"`
 } // @name VerifyMagicLinkResponse

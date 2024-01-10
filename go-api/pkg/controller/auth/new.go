@@ -17,8 +17,8 @@ type Controller interface {
 	Login(ctx context.Context, req model.LoginRequest) (*model.LoginResponse, error)
 	Signup(ctx context.Context, req model.SignupRequest) error
 
-	CreateMagicLink(ctx context.Context, email string) error
-	VerifyMagicLink(ctx context.Context, secret string) (string, error)
+	CreateMagicLink(ctx context.Context, email string) (string, error)
+	VerifyMagicLink(ctx context.Context, token string) (string, error)
 }
 
 type impl struct {
