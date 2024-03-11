@@ -132,6 +132,11 @@ definitions:
     - fullName
     - id
     type: object
+  UserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/User'
+    type: object
 info:
   contact:
     email: andy@d.foundation
@@ -150,6 +155,7 @@ paths:
       consumes:
       - application/json
       description: Login to portal by email
+      operationId: login
       parameters:
       - description: Body
         in: body
@@ -184,6 +190,7 @@ paths:
       consumes:
       - application/json
       description: Signup
+      operationId: signup
       parameters:
       - description: Body
         in: body
@@ -218,6 +225,7 @@ paths:
       consumes:
       - application/json
       description: Retrieve my information
+      operationId: getMe
       produces:
       - application/json
       responses:
@@ -247,6 +255,7 @@ paths:
       consumes:
       - application/json
       description: Update user
+      operationId: updateUser
       parameters:
       - description: Update user
         in: body
@@ -260,7 +269,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/UserResponse'
         "400":
           description: Bad Request
           schema:
@@ -283,6 +292,7 @@ paths:
       consumes:
       - application/json
       description: Update user's password
+      operationId: updatePassword
       parameters:
       - description: Update user
         in: body

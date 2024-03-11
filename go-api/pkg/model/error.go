@@ -43,6 +43,18 @@ var (
 		Code:    "EMAIL_EXISTED",
 		Message: "email existed",
 	}
+
+	ErrMissingEmail = Error{
+		Status:  http.StatusBadRequest,
+		Code:    "MISSING_EMAIL",
+		Message: "missing email",
+	}
+
+	ErrMissingSecret = Error{
+		Status:  http.StatusBadRequest,
+		Code:    "MISSING_SECRET",
+		Message: "missing secret",
+	}
 )
 
 // Error in server
